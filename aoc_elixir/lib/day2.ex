@@ -40,4 +40,57 @@ defmodule Day2 do
       _ -> false
     end
   end
+
+  def part2(input) do
+    input
+    |> Enum.reduce(0, fn line, acc ->
+      case Regex.run(~r"Game (\d+): (.+)", line) do
+        nil ->
+          acc
+
+        [_, _game_id, games] ->
+          ball_counter = fewest_balls(games)
+
+          ball_counter
+          |> Map.keys()
+          |> Enum.reduce(1, fn color, acc ->
+            acc * ball_counter[color]
+          end)
+          |> Kernel.+(acc)
+      end
+    end)
+  end
+
+  defp fewest_balls(games) do
+    counter = %{red: 0, green: 0, blue: 0}
+
+    games
+    |> String.split(";", trim: true)
+    |> Enum.reduce(counter, fn balls, acc ->
+      ball_counts = ball_count(balls)
+
+      Map.keys(ball_counts)
+      |> Enum.reduce(acc, fn color, acc ->
+        Map.update!(acc, color, fn existing ->
+          if ball_counts[color] > acc[color] do
+            ball_counts[color]
+          else
+            existing
+          end
+        end)
+      end)
+    end)
+  end
+
+  defp ball_count(game) do
+    counter = %{red: 0, green: 0, blue: 0}
+
+    game
+    |> String.split(",", trim: true)
+    |> Enum.reduce(counter, fn ball, acc ->
+      [_, count, color] = Regex.run(~r/(\d+) (\w+)/, ball)
+
+      Map.update!(acc, String.to_atom(color), &(&1 + String.to_integer(count)))
+    end)
+  end
 end
