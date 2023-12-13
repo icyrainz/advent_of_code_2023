@@ -88,12 +88,37 @@ defmodule AocElixirTest do
       ...$.*....
       .664.598..
       """
+      |> String.split("\n")
+      |> Day3.part1()
+
+    assert result == 4361
+  end
+
+  @tag :day3part2
+  test "day3 part2 sample" do
+    result =
+      """
+      467..114..
+      ...*......
+      ..35..633.
+      ......#...
+      617*......
+      .....+.58.
+      ..592.....
+      ......755.
+      ...$.*....
+      .664.598..
+      """
+      |> String.split("\n")
+      |> Day3.part2()
+
+    assert result == 467835
   end
 
   @tag :print
   test "print" do
-    read_input(2)
-    |> Day2.part2()
+    read_input(3)
+    |> Day3.part2()
     |> IO.puts()
 
     assert false
